@@ -2,9 +2,10 @@ package mx.edu.itses.lfuab.MetodosNumericos.services;
 
 import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
-import mx.edu.itses.lfabMetodosNumericos.domain.Biseccion;
-import mx.edu.itses.lfabMetodosNumericos.domain.PuntoFijo;
-import mx.edu.itses.lfabMetodosNumericos.domain.ReglaFalsa;
+import mx.edu.itses.lfuab.MetodosNumericos.domain.Biseccion;
+import mx.edu.itses.lfuab.MetodosNumericos.domain.PuntoFijo;
+import mx.edu.itses.lfuab.MetodosNumericos.domain.ReglaFalsa;
+import mx.edu.itses.lfuab.MetodosNumericos.domain.NewtonRaphsony;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class UnidadIIServiceImpl implements UnidadIIService {
 
     @Override
-    public ArrayList<Biseccion> AlgoritmoBiseccion(Biseccion biseccion){
+    public ArrayList<Biseccion> AlgoritmoBiseccion(Biseccion biseccion) {
         ArrayList<Biseccion> respuesta = new ArrayList<>();
         double XL, XU, XRa, XRn, FXL, FXU, FXR, Ea;
 
@@ -55,13 +56,13 @@ public class UnidadIIServiceImpl implements UnidadIIService {
             }
         } else {
             Biseccion renglon = new Biseccion();
-           // renglon.setIntervaloInvalido(true);
+            // renglon.setIntervaloInvalido(true);
             respuesta.add(renglon);
         }
 
         return respuesta;
     }
-    
+
     @Override
     public ArrayList<PuntoFijo> AlgoritmoPuntoFijo(PuntoFijo puntofijo) {
         ArrayList<PuntoFijo> respuesta = new ArrayList<>();
@@ -96,7 +97,7 @@ public class UnidadIIServiceImpl implements UnidadIIService {
         }
         return respuesta;
     }
-    
+
     @Override
     public ArrayList<ReglaFalsa> AlgoritmoReglaFalsa(ReglaFalsa reglafalsa) {
         ArrayList<ReglaFalsa> respuesta = new ArrayList<>();
@@ -149,4 +150,45 @@ public class UnidadIIServiceImpl implements UnidadIIService {
 
         return respuesta;
     }
+
+    @Override
+    public ArrayList<NewtonRaphsony> AlgoritmoNewtonRaphson(NewtonRaphsony newtonRaphsony) {
+        ArrayList<NewtonRaphsony> respuesta = new ArrayList<>();
+        double XI, XI1, FXI, DFXI, Ea;
+
+        XI = newtonRaphsony.getXI();
+        Ea = 100;
+        for (int i = 1; i <= newtonRaphsony.getIteracionesMaximas(); i++) {
+            FXI = Funciones.Ecuacion(newtonRaphsony.getFx(), XI);      // f(XI)
+            DFXI = Funciones.Ecuacion(newtonRaphsony.getDFX(), XI);    // f'(XI)
+            if (DFXI == 0) {
+                // No se puede dividir entre cero, termina el ciclo
+                break;
+            }
+            XI1 = XI - (FXI / DFXI);                                   // Newton-Raphson
+
+            if (i != 1) {
+                Ea = Funciones.ErrorRelativo(XI1, XI);
+            }
+            NewtonRaphsony renglon = new NewtonRaphsony();
+            renglon.setFx(newtonRaphsony.getFx());
+            renglon.setDFX(newtonRaphsony.getDFX());
+            renglon.setXI(XI);
+            renglon.setXI1(XI1);
+            renglon.setFXI(FXI);
+            renglon.setDFXI(DFXI);
+            renglon.setEa(Ea);
+            renglon.setIteracionesMaximas(newtonRaphsony.getIteracionesMaximas());
+            renglon.setIteracion(i);
+
+            respuesta.add(renglon);
+
+            if (Ea <= newtonRaphsony.getEa()) {
+                break;
+            }
+            XI = XI1;
+        }
+        return respuesta;
+    }
+
 }

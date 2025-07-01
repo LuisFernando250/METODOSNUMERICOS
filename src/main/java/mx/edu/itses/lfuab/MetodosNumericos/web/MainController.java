@@ -1,4 +1,4 @@
-package mx.edu.itses.lfab.MetodosNumericos.web;
+package mx.edu.itses.lfuab.MetodosNumericos.web;
 
 import ch.qos.logback.core.model.Model;
 import lombok.extern.slf4j.Slf4j;
@@ -11,9 +11,7 @@ public class MainController {
 
     @GetMapping("/")
     public String inicio(Model model) {
-        int i = 1;
-        log.info("Mens salida:{}", i);
-        //model.addAttribute("valori",i);
+        log.info("INDEX");
         return "index";
     }
 

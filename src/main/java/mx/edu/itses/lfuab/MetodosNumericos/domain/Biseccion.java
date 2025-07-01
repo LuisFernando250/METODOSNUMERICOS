@@ -1,5 +1,5 @@
 
-package mx.edu.itses.lfabMetodosNumericos.domain;
+package mx.edu.itses.lfuab.MetodosNumericos.domain;
 
 import lombok.Data;
 
