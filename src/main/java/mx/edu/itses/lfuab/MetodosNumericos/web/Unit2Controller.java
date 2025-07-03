@@ -5,19 +5,25 @@ import mx.edu.itses.lfuab.MetodosNumericos.domain.Biseccion;
 import mx.edu.itses.lfuab.MetodosNumericos.domain.NewtonRaphsony;
 import mx.edu.itses.lfuab.MetodosNumericos.domain.ReglaFalsa;
 import mx.edu.itses.lfuab.MetodosNumericos.domain.PuntoFijo;
+import mx.edu.itses.lfuab.MetodosNumericos.domain.Secante;
+import mx.edu.itses.lfuab.MetodosNumericos.domain.SecanteModificado;
 import mx.edu.itses.lfuab.MetodosNumericos.services.UnidadIIService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Slf4j
 @Controller
 public class Unit2Controller {
-
     @Autowired
     private UnidadIIService bisectionservice;
+    @GetMapping("/unit2")
+    public String index(Model model){
+        return "unit2/index";
+    }
 
     @GetMapping("unit2/formbisection")
     public String formBisecccion(Model model) {
@@ -30,7 +36,6 @@ public class Unit2Controller {
     @GetMapping("unit2/formreglafalsa")
     public String formReglaFalsa(Model model) {
         ReglaFalsa reglafalsa = new ReglaFalsa();
-
         model.addAttribute("reglafalsa", reglafalsa);
         return "unit2/reglafalsa/formreglafalsa";
     }
@@ -38,7 +43,7 @@ public class Unit2Controller {
     @PostMapping("/unit2/solvebisection")
     public String solvebisection(Biseccion biseccion, Model model) {
         var solveBisection = bisectionservice.AlgoritmoBiseccion(biseccion);
-        log.info("Arreglo" + solveBisection);
+        log.info("Arreglo Bisección: " + solveBisection);
         model.addAttribute("solveBisection", solveBisection);
         return "/unit2/bisection/solvebisection";
     }
@@ -46,7 +51,7 @@ public class Unit2Controller {
     @PostMapping("/unit2/solvereglafalsa")
     public String solvereglafalsa(ReglaFalsa reglafalsa, Model model) {
         var solveReglaFalsa = bisectionservice.AlgoritmoReglaFalsa(reglafalsa);
-        log.info("Arreglo" + solveReglaFalsa);
+        log.info("Arreglo Regla Falsa: " + solveReglaFalsa);
         model.addAttribute("solveReglaFalsa", solveReglaFalsa);
         return "/unit2/reglafalsa/solvereglafalsa";
     }
@@ -61,7 +66,14 @@ public class Unit2Controller {
     @PostMapping("/unit2/solvepuntofijo")
     public String solvePuntoFijo(PuntoFijo puntoFijo, Model model) {
         var solvePuntoFijo = bisectionservice.AlgoritmoPuntoFijo(puntoFijo);
+
+        // DEPURACIÓN: Imprimir tamaño y contenido
+        System.out.println("Tamaño de solvePuntoFijo: " + solvePuntoFijo.size());
+        for (PuntoFijo renglon : solvePuntoFijo) {
+            System.out.println(renglon);
+        }
         log.info("Arreglo Punto Fijo: " + solvePuntoFijo);
+
         model.addAttribute("solvePuntoFijo", solvePuntoFijo);
         return "/unit2/puntofijo/solvepuntofijo";
     }
@@ -79,6 +91,35 @@ public class Unit2Controller {
         log.info("Arreglo Newton Raphson: " + solveNewtonRaphson);
         model.addAttribute("solveNewtonRaphson", solveNewtonRaphson);
         return "/unit2/newtonraphson/solvenewtonraphson";
+    }
+
+    @GetMapping("/unit2/formsecante")
+    public String formSecante(Model model) {
+        model.addAttribute("secante", new Secante());
+        return "unit2/secante/formsecante";
+    }
+
+    @PostMapping("/unit2/solvesecante")
+    public String solveSecante(@ModelAttribute Secante secante, Model model) {
+        var resultados = bisectionservice.AlgoritmoSecante(secante);
+        model.addAttribute("solveSecante", resultados);
+        return "/unit2/secante/solvesecante";
+    }
+
+    @GetMapping("/unit2/formsecantemodificado")
+    public String formSecanteModificado(Model model) {
+        model.addAttribute("secanteModificado", new SecanteModificado());
+        return "unit2/secantemodificado/formsecantemodificado";
+    }
+
+    @PostMapping("/unit2/solvesecantemodificado")
+    public String solveSecanteModificado(
+            @ModelAttribute SecanteModificado secanteModificado,
+            Model model) {
+
+        var resultados = bisectionservice.AlgoritmoSecanteModificado(secanteModificado);
+        model.addAttribute("solveSecanteModificado", resultados);
+        return "unit2/secantemodificado/solvesecantemodificado";
     }
 
 }

@@ -19,5 +19,9 @@ public class Funciones {
         return abs((ValorNuevo - ValorAnterior) / ValorNuevo * 100);
     }
 
+    static double Derivada(String fx, double x) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 
 }

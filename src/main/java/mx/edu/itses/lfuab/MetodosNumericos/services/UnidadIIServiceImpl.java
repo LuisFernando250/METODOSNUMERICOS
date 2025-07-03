@@ -6,6 +6,8 @@ import mx.edu.itses.lfuab.MetodosNumericos.domain.Biseccion;
 import mx.edu.itses.lfuab.MetodosNumericos.domain.PuntoFijo;
 import mx.edu.itses.lfuab.MetodosNumericos.domain.ReglaFalsa;
 import mx.edu.itses.lfuab.MetodosNumericos.domain.NewtonRaphsony;
+import mx.edu.itses.lfuab.MetodosNumericos.domain.Secante;
+import mx.edu.itses.lfuab.MetodosNumericos.domain.SecanteModificado;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +23,6 @@ public class UnidadIIServiceImpl implements UnidadIIService {
         XU = biseccion.getXU();
         XRa = 0;
         Ea = 100;
-        // Verificamos que en el intervalo definido haya un cambio de signo
         FXL = Funciones.Ecuacion(biseccion.getFX(), XL);
         FXU = Funciones.Ecuacion(biseccion.getFX(), XU);
         if (FXL * FXU < 0) {
@@ -72,8 +73,8 @@ public class UnidadIIServiceImpl implements UnidadIIService {
         Ea = 100;
 
         for (int i = 1; i <= puntofijo.getIteracionesMaximas(); i++) {
-            XI1 = Funciones.Ecuacion(puntofijo.getGX(), XI);      // XI1 = g(XI)
-            FXI = Funciones.Ecuacion(puntofijo.getGX(), XI);      // FXI = g(XI)
+            XI1 = Funciones.Ecuacion(puntofijo.getGX(), XI);
+            FXI = Funciones.Ecuacion(puntofijo.getGX(), XI);
 
             if (i != 1) {
                 Ea = Funciones.ErrorRelativo(XI1, XI);
@@ -107,7 +108,6 @@ public class UnidadIIServiceImpl implements UnidadIIService {
         XU = reglafalsa.getXU();
         XRa = 0;
         Ea = 100;
-        // Verificamos que en el intervalo definido haya un cambio de signo
         FXL = Funciones.Ecuacion(reglafalsa.getFX(), XL);
         FXU = Funciones.Ecuacion(reglafalsa.getFX(), XU);
         if (FXL * FXU < 0) {
@@ -144,7 +144,6 @@ public class UnidadIIServiceImpl implements UnidadIIService {
             }
         } else {
             ReglaFalsa renglon = new ReglaFalsa();
-            // renglon.setIntervaloInvalido(true);
             respuesta.add(renglon);
         }
 
@@ -159,13 +158,13 @@ public class UnidadIIServiceImpl implements UnidadIIService {
         XI = newtonRaphsony.getXI();
         Ea = 100;
         for (int i = 1; i <= newtonRaphsony.getIteracionesMaximas(); i++) {
-            FXI = Funciones.Ecuacion(newtonRaphsony.getFx(), XI);      // f(XI)
-            DFXI = Funciones.Ecuacion(newtonRaphsony.getDFX(), XI);    // f'(XI)
+            FXI = Funciones.Ecuacion(newtonRaphsony.getFx(), XI);
+            DFXI = Funciones.Ecuacion(newtonRaphsony.getDFX(), XI);
             if (DFXI == 0) {
-                // No se puede dividir entre cero, termina el ciclo
+
                 break;
             }
-            XI1 = XI - (FXI / DFXI);                                   // Newton-Raphson
+            XI1 = XI - (FXI / DFXI);
 
             if (i != 1) {
                 Ea = Funciones.ErrorRelativo(XI1, XI);
@@ -187,8 +186,77 @@ public class UnidadIIServiceImpl implements UnidadIIService {
                 break;
             }
             XI = XI1;
+
         }
         return respuesta;
     }
 
+    @Override
+    public ArrayList<Secante> AlgoritmoSecante(Secante secante) {
+        ArrayList<Secante> respuesta = new ArrayList<>();
+        double xi_1 = secante.getXI_1();
+        double xi = secante.getXI();
+        double ea = 100;
+
+        for (int i = 1; i <= secante.getIteracionesMaximas(); i++) {
+            double f_xi_1 = Funciones.Ecuacion(secante.getFX(), xi_1);
+            double f_xi = Funciones.Ecuacion(secante.getFX(), xi);
+            double xi1 = xi - f_xi * (xi_1 - xi) / (f_xi_1 - f_xi);
+            if (i != 1) {
+                ea = Funciones.ErrorRelativo(xi1, xi);
+            }
+
+            Secante renglon = new Secante();
+            renglon.setFX(secante.getFX());
+            renglon.setXI_1(xi_1);
+            renglon.setXI(xi);
+            renglon.setXI1(xi1);
+            renglon.setFXI_1(f_xi_1);
+            renglon.setFXI(f_xi);
+            renglon.setEa(ea);
+            renglon.setIteracionesMaximas(secante.getIteracionesMaximas());
+            renglon.setIteracion(i);
+            respuesta.add(renglon);
+
+            if (ea <= secante.getEa()) {
+                break;
+            }
+            xi_1 = xi;
+            xi = xi1;
+        }
+        return respuesta;
+    }
+
+    @Override
+    public ArrayList<SecanteModificado> AlgoritmoSecanteModificado(SecanteModificado s) {
+        ArrayList<SecanteModificado> respuesta = new ArrayList<>();
+        double x = s.getX();
+        double ea = 100;
+
+        for (int i = 1; i <= s.getIteracionesMaximas(); i++) {
+            double f_x = Funciones.Ecuacion(s.getFX(), x);
+            double df_x = Funciones.Derivada(s.getFX(), x);
+            double x1 = x - f_x / df_x;
+            if (i != 1) {
+                ea = Funciones.ErrorRelativo(x1, x);
+            }
+
+            SecanteModificado renglon = new SecanteModificado();
+            renglon.setFX(s.getFX());
+            renglon.setX(x);
+            renglon.setXI1(x1);
+            renglon.setFXI(f_x);
+            renglon.setDerivada(df_x);
+            renglon.setEa(ea);
+            renglon.setIteracionesMaximas(s.getIteracionesMaximas());
+            renglon.setIteracion(i);
+            respuesta.add(renglon);
+
+            if (ea <= s.getEa()) {
+                break;
+            }
+            x = x1;
+        }
+        return respuesta;
+    }
 }

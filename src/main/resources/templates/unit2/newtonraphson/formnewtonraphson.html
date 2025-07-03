@@ -30,23 +30,23 @@
         <form class="row-g3" th:action="@{/unit2/solvenewtonraphson}" method="post" th:object="${newtonRaphsony}">
             <div class="mb-3">
                 <label for="fx" class="form-label">Ingresa la función f(x):</label>
-                <input type="text" class="form-control" id="fx" name="fx" th:field="*{fx}" required placeholder="-1+5.5*x-4*x^2+0.5*x^3">
+                <input type="text" class="form-control" id="fx" th:field="*{fx}" required placeholder="-1+5.5*x-4*x^2+0.5*x^3">
             </div>
             <div class="mb-3">
                 <label for="DFX" class="form-label">Ingresa la derivada f'(x):</label>
-                <input type="text" class="form-control" id="DFX" name="DFX" th:field="*{DFX}" required placeholder="5.5-8*x+1.5*x^2">
+                <input type="text" class="form-control" id="DFX" th:field="*{DFX}" required placeholder="5.5-8*x+1.5*x^2">
             </div>
             <div class="mb-3">
                 <label for="XI" class="form-label">Valor Inicial Xi:</label>
-                <input type="number" step="any" class="form-control" id="XI" name="XI" th:field="*{XI}" required>
+                <input type="number" step="any" class="form-control" id="XI" th:field="*{XI}" required>
             </div>
             <div class="mb-3">
-                <label for="Ea" class="form-label">Error Estimado:</label>
-                <input type="number" step="any" class="form-control" id="Ea" name="Ea" th:field="*{Ea}" required placeholder="0.01">
+                <label for="Ea" class="form-label">Error Estimado (%):</label>
+                <input type="number" step="any" class="form-control" id="Ea" th:field="*{Ea}" required placeholder="0.01">
             </div>
             <div class="mb-3">
                 <label for="IteracionesMaximas" class="form-label">Iteraciones Máximas:</label>
-                <input type="number" class="form-control" id="IteracionesMaximas" name="IteracionesMaximas" th:field="*{IteracionesMaximas}" required>
+                <input type="number" class="form-control" id="IteracionesMaximas" th:field="*{IteracionesMaximas}" required>
             </div>
             <button type="submit" class="btn btn-primary w-100">Calcular</button>
         </form>

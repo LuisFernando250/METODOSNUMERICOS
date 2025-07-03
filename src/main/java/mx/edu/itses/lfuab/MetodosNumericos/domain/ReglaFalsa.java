@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ReglaFalsa {
     
-    private String FX; //Funcion a Evaluar
+    private String FX; 
     private double XL;
     private double XU;
     private double XR;
